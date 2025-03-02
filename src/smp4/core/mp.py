@@ -2,7 +2,7 @@ import smp4.utils.native.injector as injector
 from smp4.core import multiplayer_client, multiplayer_server
 import services
 import sims4
-from  smp4.core.overrides.override_functions import override_functions_depending_on_client_or_not
+from smp4.overrides.override_functions import override_functions_depending_on_client_or_not
 import smp4.configs.server_config
 import smp4.utils.native.injector
 from smp4.core.csn import show_server_host_attempt

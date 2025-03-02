@@ -1,6 +1,6 @@
 import distributor.distributor_service
 import animation.arb
-from smp4.core.overrides.simulation.distributor import system as system_distributor
+from smp4.overrides.simulation.distributor import system as system_distributor
 
 from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
 
