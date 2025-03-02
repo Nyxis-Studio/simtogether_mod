@@ -1,14 +1,14 @@
 import socket
 import threading
 
-import ts4mp
-from ts4mp.debug.log import ts4mp_log
-from ts4mp.core.mp_sync import outgoing_lock, outgoing_commands
-from ts4mp.core.mp_sync import incoming_lock
-from ts4mp.core.networking import generic_send_loop, generic_listen_loop
-from ts4mp.core.csn import show_client_connect_on_server
-from ts4mp.core.mp_sync import HeartbeatMessage
-from ts4mp.core.csn import show_unsuccessful_server_host
+import smp4
+from smp4.debug.log import debug_log
+from smp4.core.mp_sync import outgoing_lock, outgoing_commands
+from smp4.core.mp_sync import incoming_lock
+from smp4.core.networking import generic_send_loop, generic_listen_loop
+from smp4.core.csn import show_client_connect_on_server
+from smp4.core.mp_sync import HeartbeatMessage
+from smp4.core.csn import show_unsuccessful_server_host
 
 import time
 class Server:
@@ -35,7 +35,7 @@ class Server:
         while self.alive:
             messages_sent = 0
             if self.clientsocket is not None:
-                ts4mp_log("Messages", "Sending {} messages".format(len(outgoing_commands)))
+                debug_log("Messages", "Sending {} messages".format(len(outgoing_commands)))
                 with outgoing_lock:
                     for data in outgoing_commands:
                         generic_send_loop(data, self.clientsocket)
@@ -63,7 +63,7 @@ class Server:
         try:
             self.clientsocket, address = self.serversocket.accept()
             show_client_connect_on_server()
-            ts4mp_log("server", "Client Connect")
+            debug_log("server", "Client Connect")
 
             clientsocket = self.clientsocket
             size = None
@@ -73,10 +73,10 @@ class Server:
                 new_command, data, size = generic_listen_loop(clientsocket, data, size)
                 if new_command is not None:
                     with incoming_lock:
-                        ts4mp.core.mp_sync.incoming_commands.append(new_command)
+                        smp4.core.mp_sync.incoming_commands.append(new_command)
         except socket.error as e:
             show_unsuccessful_server_host()
-            ts4mp_log("sockets", str(e))
+            debug_log("sockets", str(e))
             self.alive = False
             self.serversocket.shutdown(socket.SHUT_RDWR)
             self.serversocket.close()

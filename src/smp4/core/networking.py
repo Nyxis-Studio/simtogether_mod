@@ -2,10 +2,10 @@ import pickle
 import sys
 from struct import unpack, pack
 
-from ts4mp.debug.log import ts4mp_log
+from smp4.debug.log import debug_log
 
 def generic_send_loop(data, socket):
-    ts4mp_log("send", "Sending {} bytes of data".format(sys.getsizeof(data)))
+    debug_log("send", "Sending {} bytes of data".format(sys.getsizeof(data)))
     
     data = pickle.dumps(data)
     length = pack('>Q', sys.getsizeof(data))
@@ -25,7 +25,7 @@ def generic_listen_loop(socket, data, size):
         new_data = socket.recv(bytes_to_receive)
         data += new_data
     elif size == sys.getsizeof(data):
-        ts4mp_log("receive", "Received new command with {} bytes of data".format(sys.getsizeof(data)))
+        debug_log("receive", "Received new command with {} bytes of data".format(sys.getsizeof(data)))
 
         data = pickle.loads(data)
 

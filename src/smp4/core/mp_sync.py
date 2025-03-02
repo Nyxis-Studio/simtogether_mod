@@ -11,10 +11,10 @@ from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 from server_commands.career_commands import find_career, select_career
 from server_commands.argument_helpers import RequiredTargetParam
-from ts4mp.core.csn import mp_chat
-from ts4mp.debug.log import ts4mp_log
-from ts4mp.core.mp_utils import get_sims_documents_directory
-from ts4mp.core.pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
+from smp4.core.csn import mp_chat
+from smp4.debug.log import debug_log
+from smp4.core.mp_utils import get_sims_documents_directory
+from smp4.core.pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 
 ALPHABETIC_REGEX = re.compile('[a-zA-Z]')
 
@@ -54,9 +54,9 @@ def _do_command(command_name, *args):
     if command_name in PERFORM_COMMAND_FUNCTIONS:
         PERFORM_COMMAND_FUNCTIONS[command_name](*args)
 
-        ts4mp_log("commands", "There is a command named: {}. Executing it.".format(command_name))
+        debug_log("commands", "There is a command named: {}. Executing it.".format(command_name))
     else:
-        ts4mp_log("commands", "There is no such command named: {}!".format(command_name))
+        debug_log("commands", "There is no such command named: {}!".format(command_name))
 
 class ProtocolBufferMessage:
     def __init__(self, msg_id, msg):
@@ -84,7 +84,7 @@ def get_file_matching_name(name):
             replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").strip()
             replaced = replaced[1:]
 
-            ts4mp_log("zone_id", "{} , {}".format(replaced, name))
+            debug_log("zone_id", "{} , {}".format(replaced, name))
 
             if name == replaced:
                 file_path = str(os.path.join(root, file_name))
@@ -156,14 +156,14 @@ def server_sync():
             parse_all_args_except_for_function_name(current_line, function_name, parsed_args)
 
             stripped_function_name = function_name.strip()
-            ts4mp_log("arg_handler", stripped_function_name)
+            debug_log("arg_handler", stripped_function_name)
 
             client_id = replace_client_id_for_ui_commands(stripped_function_name)
             parsed_args[-1] = client_id
 
             function_to_execute = format_command_to_execute(function_name, parsed_args)
 
-            ts4mp_log("client_specific", "New function called {} recieved".format(stripped_function_name))
+            debug_log("client_specific", "New function called {} recieved".format(stripped_function_name))
 
             create_and_append_pendable_command(client_id, stripped_function_name)
 
@@ -193,7 +193,7 @@ def replace_RequiredTargetParam_argument_in_command(arg_index, function_name, pa
 
 def remove_unneeded_symbols_from_command(arg_index, current_line):
     arg = current_line[arg_index].replace(')', '').replace('{}', '').replace('(', '').replace("[", "").replace("]", "")
-    ts4mp_log("arg_handler", str(arg) + "\n", force=False)
+    debug_log("arg_handler", str(arg) + "\n", force=False)
     if "'" not in arg and "True" not in arg and "False" not in arg:
         arg = ALPHABETIC_REGEX.sub('', arg)
         arg = arg.replace('<._ = ', '').replace('>', '')
@@ -201,11 +201,11 @@ def remove_unneeded_symbols_from_command(arg_index, current_line):
 
 
 def attempt_command(command, function_name, function_to_execute, incoming_commands, parsed_args):
-    ts4mp_log('arg_handler', str(function_to_execute))
+    debug_log('arg_handler', str(function_to_execute))
     try:
         _do_command(function_name, *parsed_args)
     except Exception as e:
-        ts4mp_log("Execution Errors", str(e))
+        debug_log("Execution Errors", str(e))
     incoming_commands.remove(command)
 
 
@@ -243,7 +243,7 @@ def _parse_arg(arg):
 
     orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").strip()
     new_arg = orig_arg
-    ts4mp_log("arg_handler", "First pass: " + str(new_arg) + "\n", force=False)
+    debug_log("arg_handler", "First pass: " + str(new_arg) + "\n", force=False)
 
 
 
@@ -256,6 +256,6 @@ def _parse_arg(arg):
             pass
     except BaseException:
         pass 
-    ts4mp_log("arg_handler", "Second pass: " +  str(new_arg) + "\n", force=False)
+    debug_log("arg_handler", "Second pass: " + str(new_arg) + "\n", force=False)
 
     return new_arg

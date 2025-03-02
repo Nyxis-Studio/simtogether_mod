@@ -1,6 +1,6 @@
 import server.clientmanager
 
-from ts4mp.configs.server_config import MULTIPLAYER_MOD_ENABLED
+from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
 
 def get_first_client(self):
     # Get the original client instead of the stand-in client. Just in-case some EA code is finnicky with multiple clients. Only supports one

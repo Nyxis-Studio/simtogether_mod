@@ -1,13 +1,13 @@
 import socket
 import threading
 
-import ts4mp
-import ts4mp.core.mp
-from ts4mp.debug.log import ts4mp_log, Timer
-from ts4mp.core.mp_sync import outgoing_lock, outgoing_commands
-from ts4mp.core.networking import generic_send_loop, generic_listen_loop
-from ts4mp.core.mp_sync import incoming_lock
-from ts4mp.core.csn import show_client_connect_on_client, show_client_connection_failure
+import smp4
+import smp4.core.mp
+from smp4.debug.log import debug_log, Timer
+from smp4.core.mp_sync import outgoing_lock, outgoing_commands
+from smp4.core.networking import generic_send_loop, generic_listen_loop
+from smp4.core.mp_sync import incoming_lock
+from smp4.core.csn import show_client_connect_on_client, show_client_connection_failure
 
 
 class Client:
@@ -42,7 +42,7 @@ class Client:
                 # time.sleep(1)
         except Exception as e:
             show_client_connection_failure()
-            ts4mp_log("sockets", str(e))
+            debug_log("sockets", str(e))
 
             self.connected = False
 
@@ -58,12 +58,12 @@ class Client:
                         if not self.ever_recieved_data:
                             show_client_connect_on_client()
 
-                            ts4mp.core.mp.on_successful_client_connect()
+                            smp4.core.mp.on_successful_client_connect()
                             self.ever_recieved_data = True
                         with incoming_lock:
-                            ts4mp.core.mp_sync.incoming_commands.append(new_command)
+                            smp4.core.mp_sync.incoming_commands.append(new_command)
                 except socket.error as e:
-                    ts4mp_log("sockets", "Catastrophic failure: {}".format(e))
+                    debug_log("sockets", "Catastrophic failure: {}".format(e))
 
                     show_client_connection_failure()
                     self.connected = False

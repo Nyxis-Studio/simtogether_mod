@@ -15,8 +15,8 @@ from sims4.callback_utils import consume_exceptions
 from distributor.ops import GenericProtocolBufferOp
 from protocolbuffers.DistributorOps_pb2 import Operation
 
-from ts4mp.debug.log import ts4mp_log
-from ts4mp.core.pending_client_commands import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
+from smp4.debug.log import debug_log
+from smp4.core.pending_client_commands import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
 
 class Distributor:
     def __init__(self):
@@ -110,7 +110,7 @@ class Distributor:
             for obj in manager.get_all():
                 # if issubclass(type(obj), BaseSituation):
                 all_objs.append(obj)
-        ts4mp_log("objs in view", str(all_objs))
+        debug_log("objs in view", str(all_objs))
 
         self.client_distributors.append(client_distributor)
 
@@ -128,7 +128,7 @@ class Distributor:
 
     def add_op(self, obj, op):
         if isinstance(obj, Client):
-            # ts4mp_log_debug("logs", "The owner of this operation is a client.")
+            # debug_log("logs", "The owner of this operation is a client.")
             client_distributor = self.get_client(obj.id)
 
             if client_distributor is not None:
@@ -179,13 +179,13 @@ class Distributor:
             logger.error('Could not add event {0} because there are no attached clients', msg_id)
             return
 
-        ts4mp_log("client_specific", "Trying to add an event to a client.")
+        debug_log("client_specific", "Trying to add an event to a client.")
         function_name = get_command_function_from_pb(msg_id)
-        ts4mp_log("client_specific", "Function is {}".format(function_name))
+        debug_log("client_specific", "Function is {}".format(function_name))
 
         if function_name is not None:
             client_id = try_get_client_id_of_pending_command(function_name)
-            ts4mp_log("client_specific", "Client is {}".format(client_id))
+            debug_log("client_specific", "Client is {}".format(client_id))
 
             if client_id is not None:
                 remove_earliest_command_client(function_name)
@@ -193,11 +193,11 @@ class Distributor:
 
                 if target_client is not None:
                     target_client.add_event(msg_id, msg, immediate)
-                    ts4mp_log("client_specific", "Adding event to client")
+                    debug_log("client_specific", "Adding event to client")
                     return
 
-        ts4mp_log("client_specific", "No suitable client found, so I'm just going to send it to everybody")
-        ts4mp_log("client_specific", msg)
+        debug_log("client_specific", "No suitable client found, so I'm just going to send it to everybody")
+        debug_log("client_specific", msg)
         self.events.append((msg_id, msg))
 
         if immediate:
@@ -205,7 +205,7 @@ class Distributor:
 
     def add_event_for_client(self, client, msg_id, msg, immediate):
         client.add_event(msg_id, msg, immediate)
-        ts4mp_log("events", "Sending msg with id {} to client {}".format(msg_id, client.client.id))
+        debug_log("events", "Sending msg with id {} to client {}".format(msg_id, client.client.id))
 
     def process(self):
         for client_distributor in self.client_distributors:
@@ -238,8 +238,8 @@ class Distributor:
 
     def get_client(self, client_id):
         for client_distributor in self.client_distributors:
-            ts4mp_log("debugging", "Attempting to find client distributor with id: {}, currently found: {}".format(client_id,
-                                                                                                         client_distributor.client.id))
+            debug_log("debugging", "Attempting to find client distributor with id: {}, currently found: {}".format(client_id,
+                                                                                                                   client_distributor.client.id))
 
             if client_distributor.client.id == client_id:
                 return client_distributor
@@ -247,7 +247,7 @@ class Distributor:
     def get_distributor_with_active_sim_matching_sim_id(self, sim_id):
         for client_distributor in self.client_distributors:
             if client_distributor.client.active_sim is not None:
-                ts4mp_log("chat", "Active client sim id: {}".format(client_distributor.client.active_sim.id))
+                debug_log("chat", "Active client sim id: {}".format(client_distributor.client.active_sim.id))
 
                 if client_distributor.client.active_sim.id == sim_id:
                     return client_distributor

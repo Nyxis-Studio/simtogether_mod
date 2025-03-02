@@ -3,10 +3,10 @@ import os
 
 import sims4.commands
 from sims4 import reload
-from ts4mp.core.mp_utils import get_sims_documents_directory
+from smp4.core.mp_utils import get_sims_documents_directory
 
-#use it like Scripts\ts4mp\debug\reload
-@sims4.commands.Command('ts4mp.reload', command_type=sims4.commands.CommandType.Live)
+#use it like Scripts\smp4\debug\reload
+@sims4.commands.Command('smp4.reload', command_type=sims4.commands.CommandType.Live)
 def reload_maslow(module: str, _connection=None):
     output = sims4.commands.CheatOutput(_connection)
 

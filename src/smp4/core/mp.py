@@ -1,13 +1,13 @@
-import ts4mp.utils.native.injector as injector
-from ts4mp.core import multiplayer_client, multiplayer_server
+import smp4.utils.native.injector as injector
+from smp4.core import multiplayer_client, multiplayer_server
 import services
 import sims4
-from  ts4mp.core.overrides.override_functions import override_functions_depending_on_client_or_not
-import ts4mp.configs.server_config
-import ts4mp.utils.native.injector
-from ts4mp.core.csn import show_server_host_attempt
-from ts4mp.configs.server_config import MULTIPLAYER_MOD_ENABLED
-from ts4mp.debug.log import ts4mp_log
+from  smp4.core.overrides.override_functions import override_functions_depending_on_client_or_not
+import smp4.configs.server_config
+import smp4.utils.native.injector
+from smp4.core.csn import show_server_host_attempt
+from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
+from smp4.debug.log import debug_log
 
 if MULTIPLAYER_MOD_ENABLED:
     is_client = False
@@ -55,11 +55,11 @@ if MULTIPLAYER_MOD_ENABLED:
 
     @sims4.commands.Command('mp.connect', command_type=sims4.commands.CommandType.Live)
     def connect(_connection=None):
-        setup(True, ts4mp.configs.server_config.HOST, ts4mp.configs.server_config.PORT)
+        setup(True, smp4.configs.server_config.HOST, smp4.configs.server_config.PORT)
 
     @sims4.commands.Command('mp.host', command_type=sims4.commands.CommandType.Live)
     def host(_connection=None):
-        ts4mp_log("host", "Starting server....")
+        debug_log("host", "Starting server....")
         setup(False)
         show_server_host_attempt()
 

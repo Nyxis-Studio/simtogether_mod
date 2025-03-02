@@ -1,8 +1,8 @@
 import distributor.distributor_service
 import animation.arb
-from ts4mp.core.overrides.simulation.distributor import system as system_distributor
+from smp4.core.overrides.simulation.distributor import system as system_distributor
 
-from ts4mp.configs.server_config import MULTIPLAYER_MOD_ENABLED
+from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
 
 def start(self):
     # Override the original function with one that creates a "SystemDistributor" instead of a regular old Distributor.

@@ -2,7 +2,7 @@ import clock
 
 from clock import GameSpeedChangeSource
 
-from ts4mp.configs.server_config import MULTIPLAYER_MOD_ENABLED
+from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
 
 def push_speed(self, speed, source=GameSpeedChangeSource.GAMEPLAY, validity_check=None, reason='', immediate=False):
     if source == GameSpeedChangeSource.GAMEPLAY:

@@ -5,15 +5,15 @@ from protocolbuffers.Distributor_pb2 import ViewUpdate
 
 from server.client import logger
 from distributor.system import Distributor
-from ts4mp.configs.server_config import MULTIPLAYER_MOD_ENABLED
+from smp4.configs.server_config import MULTIPLAYER_MOD_ENABLED
 from objects import ALL_HIDDEN_REASONS
 from protocolbuffers import Sims_pb2
 from distributor.ops import GenericProtocolBufferOp, Heartbeat, SetGameTime
 from distributor.rollback import ProtocolBufferRollback
-from ts4mp.core.mp_sync import ProtocolBufferMessage, outgoing_lock, outgoing_commands
+from smp4.core.mp_sync import ProtocolBufferMessage, outgoing_lock, outgoing_commands
 from protocolbuffers.DistributorOps_pb2 import Operation
 
-from ts4mp.debug.log import ts4mp_log
+from smp4.debug.log import debug_log
 
 def send_selectable_sims_update(self):
     msg = Sims_pb2.UpdateSelectableSims()
@@ -45,7 +45,7 @@ def send_selectable_sims_update(self):
 
                 if zone_data_proto is not None:
                     new_sim.instance_info.zone_name = zone_data_proto.name
-    ts4mp_log("debugging", "client id is: {}".format(self.id))
+    debug_log("debugging", "client id is: {}".format(self.id))
     distributor_instance = Distributor.instance().get_client(self.id)
     distributor_instance.add_op_with_no_owner(GenericProtocolBufferOp(Operation.SELECTABLE_SIMS_UPDATE, msg))
 
@@ -106,7 +106,7 @@ def send_message_server(self, msg_id, msg):
     # sending out to the multiplayer clients.
     # Only supports one multiplayer client at the moment.
 
-    #ts4mp_log("network", "Sending message to client id: {}".format(self.id))
+    #debug_log("network", "Sending message to client id: {}".format(self.id))
 
     log_update_view_protocol = None
 
@@ -114,23 +114,23 @@ def send_message_server(self, msg_id, msg):
         for entry in msg.entries:
             for operation in entry.operation_list.operations:
                 if operation.type == log_update_view_protocol:
-                    ts4mp_log("network", self.id)
-                    ts4mp_log("network", operation)
+                    debug_log("network", self.id)
+                    debug_log("network", operation)
 
     if self.id != 1000:
         if self.active:
             omega.send(self.id, msg_id, msg.SerializeToString())
-        # ts4mp_log_debug("msg", msg)
+        # debug_log("msg", msg)
     else:
         message = ProtocolBufferMessage(msg_id, msg.SerializeToString())
-        ts4mp_log("locks", "acquiring outgoing lock")
+        debug_log("locks", "acquiring outgoing lock")
 
         # We use a lock here because outgoing_commands is also being altered by the client socket thread.
         with outgoing_lock:
             outgoing_commands.append(message)
-        #ts4mp_log("network", "Queueing outgoing command for {}".format(self.id))
+        #debug_log("network", "Queueing outgoing command for {}".format(self.id))
 
-        ts4mp_log("locks", "releasing outgoing lock")
+        debug_log("locks", "releasing outgoing lock")
 
 def send_message_client(self, msg_id, msg):
     # Send Message override for the client.
