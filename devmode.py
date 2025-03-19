@@ -13,9 +13,15 @@
 #    limitations under the License.
 from Utility.helpers_debug import debug_install_mod
 from Utility.helpers_symlink import symlink_create_win, symlink_exists_win
-from settings import mods_folder, src_path, creator_name, project_name, devmode_cmd_mod_src_path, devmode_cmd_mod_name
+from settings import (
+    mods_folder,
+    src_path,
+    project_name,
+    devmode_cmd_mod_src_path,
+    devmode_cmd_mod_name,
+)
 
-is_devmode = symlink_exists_win(creator_name, mods_folder, project_name)
+is_devmode = symlink_exists_win(mods_folder, project_name)
 
 if is_devmode:
     print("You're already in Dev Mode")
@@ -23,13 +29,19 @@ if is_devmode:
 
 try:
     print("Start create symlink...")
-    symlink_create_win(creator_name, src_path, mods_folder, project_name)
+    symlink_create_win(src_path, mods_folder, project_name)
 
     print("Start installing debug mod...")
-    debug_install_mod(devmode_cmd_mod_src_path, mods_folder, devmode_cmd_mod_name, creator_name + "_" + project_name)
+    debug_install_mod(
+        devmode_cmd_mod_src_path,
+        mods_folder,
+        devmode_cmd_mod_name,
+        project_name,
+    )
 
     print("Start sync packages...")
     exec(open("sync_packages.py").read())
-except:
+except Exception as e:
     print("An error occurred!")
+    print(e)
     pass

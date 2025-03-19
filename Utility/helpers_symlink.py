@@ -18,19 +18,14 @@ import os
 from subprocess import run
 
 
-def get_scripts_path(creator_name: str, mods_dir: str, mod_name: str = "Untitled") -> str:
+def get_scripts_path(mods_dir: str, mod_name: str = "Untitled") -> str:
     """
     This builds a path to the Scripts folder inside the Mod Folder
 
-    :param creator_name: Creator Name
     :param mods_dir: Path to the Mods Folder
     :param mod_name: Name of Mod
     :return: Path to Scripts folder inside Mod Name Folder
     """
-
-    # creator_name can be omitted, if it's not then prefix it
-    if creator_name:
-        mod_name = creator_name + '_' + mod_name
 
     # Build absolute path to mod name folder
     mods_sub_dir = os.path.join(mods_dir, mod_name)
@@ -54,10 +49,7 @@ def exec_cmd(cmd: str, args: str) -> bool:
 
     try:
         # Run the command and capture output
-        result = run(cmd + " " + args,
-                     capture_output=True,
-                     text=True,
-                     shell=True)
+        result = run(cmd + " " + args, capture_output=True, text=True, shell=True)
     except:
         pass
 
@@ -69,21 +61,20 @@ def exec_cmd(cmd: str, args: str) -> bool:
     return (not str(result.stderr)) and (result.returncode == 0)
 
 
-def symlink_exists_win(creator_name: str, mods_dir: str, mod_name: str = "Untitled") -> bool:
+def symlink_exists_win(mods_dir: str, mod_name: str = "Untitled") -> bool:
     """
     Checks to see if a Scripts folder or file exists inside the Mod Folder
 
-    :param creator_name: Creator Name
     :param mods_dir: Path to the Mods Folder
     :param mod_name: Name of Mod
     :return: Whether a "Scripts" file or folder does exist in the Mod Folder
     """
 
-    scripts_path = get_scripts_path(creator_name, mods_dir, mod_name)
+    scripts_path = get_scripts_path(mods_dir, mod_name)
     return os.path.exists(scripts_path)
 
 
-def symlink_remove_win(creator_name: str, mods_dir: str, mod_name: str = "Untitled") -> None:
+def symlink_remove_win(mods_dir: str, mod_name: str = "Untitled") -> None:
     """
     Safely removes the Mod Name Folder
     /Mods/ModName/
@@ -103,18 +94,17 @@ def symlink_remove_win(creator_name: str, mods_dir: str, mod_name: str = "Untitl
 
     Always use this function to remove the Mod Name Folder
 
-    :param creator_name: Creator Name
     :param mods_dir: Path to the Mods Folder
     :param mod_name: Name of Mod
     :return: Nothing
     """
 
     # Build paths
-    scripts_path = get_scripts_path(creator_name, mods_dir, mod_name)
+    scripts_path = get_scripts_path(mods_dir, mod_name)
     mod_folder_path = str(Path(scripts_path).parent)
 
     # Check whether the Scripts folder exists
-    exists = symlink_exists_win(creator_name, mods_dir, mod_name)
+    exists = symlink_exists_win(mods_dir, mod_name)
 
     # Delete the Scripts folder and check whether it was successful
     success = exec_cmd("rmdir", '"' + scripts_path + '"')
@@ -122,8 +112,10 @@ def symlink_remove_win(creator_name: str, mods_dir: str, mod_name: str = "Untitl
     # If the Scripts folder exists but could not be deleted then print an error message and raise an exception
     if exists and not success:
         print("")
-        print("Error: Scripts folder exists but can't be removed... Did you create a Scripts folder inside the Mod "
-              "Folder at: ")
+        print(
+            "Error: Scripts folder exists but can't be removed... Did you create a Scripts folder inside the Mod "
+            "Folder at: "
+        )
         print(scripts_path)
         print("If so, please manually delete it and try again.")
         print("")
@@ -133,12 +125,11 @@ def symlink_remove_win(creator_name: str, mods_dir: str, mod_name: str = "Untitl
     remove_dir(mod_folder_path)
 
 
-def symlink_create_win(creator_name: str, src_dir: str, mods_dir: str, mod_name: str = "Untitled") -> None:
+def symlink_create_win(src_dir: str, mods_dir: str, mod_name: str = "Untitled") -> None:
     """
     Creates a symlink, it first wipes out the mod that may be there. When entering devmode, you don't compile anymore,
     so any compiled code needs to be removed.
 
-    :param creator_name: Creator Name
     :param src_dir: Path to the source folder in this project
     :param mods_dir: Path to the Mods Folder
     :param mod_name: Name of Mod
@@ -146,26 +137,29 @@ def symlink_create_win(creator_name: str, src_dir: str, mods_dir: str, mod_name:
     """
 
     # Build paths
-    scripts_path = get_scripts_path(creator_name, mods_dir, mod_name)
+    scripts_path = get_scripts_path(mods_dir, mod_name)
     print(scripts_path)
     mod_folder_path = str(Path(scripts_path).parent)
     print(mod_folder_path)
 
     # Safely remove folder with symlink
-    symlink_remove_win(creator_name, mods_dir, mod_name)
+    symlink_remove_win(mods_dir, mod_name)
 
     # Re-create folder
     ensure_path_created(mod_folder_path)
 
     # Create Scripts Folder as a Directory Junction
-    exec_cmd("mklink",
-             '/J ' +
-             '"' + scripts_path + '" '
-             '"' + src_dir + '"')
+    exec_cmd("mklink", "/J " + '"' + scripts_path + '" "' + src_dir + '"')
 
     print("")
-    print("Dev Mode is activated, you no longer have to compile after each change, run devmode.reload [path.of.module]")
-    print("to reload individual files while the game is running. To exit dev mode, simply run 'compile.py' which will")
+    print(
+        "Dev Mode is activated, you no longer have to compile after each change, run devmode.reload [path.of.module]"
+    )
+    print(
+        "to reload individual files while the game is running. To exit dev mode, simply run 'compile.py' which will"
+    )
     print("return things to normal.")
-    print("It's recomended to test a compiled version before final release after working in Dev Mode")
+    print(
+        "It's recomended to test a compiled version before final release after working in Dev Mode"
+    )
     print("")

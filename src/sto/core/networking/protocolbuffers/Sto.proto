@@ -1,0 +1,53 @@
+syntax = "proto2";
+
+package Sto.Network;
+
+enum Type {
+  UNKNOWN = 0;
+  REQUEST_SERVER_INFO = 1;
+  SERVER_INFO = 2;
+  CONNECT_SERVER = 3;
+  CONNECT_SERVER_RESPONSE = 4;
+  DISCONNECT = 5;
+  HEARTBEAT = 6;
+}
+
+message ConnectServer {
+  required string hash = 1;
+}
+
+message ConnectServerResponse {
+  required bool success = 1;
+  optional string message = 2;
+  optional uint32 client_id = 3;
+}
+
+message Disconnect {
+  required string title = 1;
+  required string message = 2;
+}
+
+message ServerInfo {
+  required string name = 1;
+  required string description = 2;
+  required int32 player_count = 3;
+  required int32 max_player_count = 4;
+  required int32 version = 5;
+}
+
+message Operation {
+  required Type type = 1;
+  optional bytes data = 2;
+}
+
+message OperationList {
+  repeated Operation operations = 1;
+}
+
+message StoUpdateEntry {
+  required OperationList operation_list = 1;
+}
+
+message StoUpdate {
+  repeated StoUpdateEntry entries = 1;
+}

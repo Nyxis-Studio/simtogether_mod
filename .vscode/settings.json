@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/ea/base",
+        "${workspaceFolder}/ea/core",
+        "${workspaceFolder}/ea/generated",
+        "${workspaceFolder}/ea/simulation",
+    ],
+}

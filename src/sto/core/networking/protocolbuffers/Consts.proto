@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package Sto.Network;
+
+enum MessageType {
+  MSG_INVALID = 0;
+
+  MSG_STO_SERVER = 10000;
+}

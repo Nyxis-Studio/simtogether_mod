@@ -1,0 +1,91 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile project",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python",
+      "args": ["${workspaceFolder}\\compile.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Compile the project, and generate the zip file",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+      },
+      "problemMatcher": [],
+      "dependsOrder": "sequence",
+      "dependsOn": ["Cleanup", "Compile protos"]
+    },
+    {
+      "label": "Compile protos",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python",
+      "args": ["${workspaceFolder}\\compile_protobuf.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Compile ao proto files",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Enable devmode",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python",
+      "args": ["${workspaceFolder}\\devmode.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Enable devmode, which will generate files in mods folder",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+      },
+      "problemMatcher": [],
+      "dependsOn": ["Cleanup"],
+      "dependsOrder": "sequence"
+    },
+    {
+      "label": "Cleanup",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python",
+      "args": ["${workspaceFolder}\\cleanup.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Cleanup all generated files in mods folder",
+     "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Enable debug",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python",
+      "args": ["${workspaceFolder}\\debug_setup.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Enable debug mode",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+      },
+      "problemMatcher": [],
+    },
+  ]
+}

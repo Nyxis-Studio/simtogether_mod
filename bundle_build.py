@@ -16,11 +16,11 @@ from zipfile import PyZipFile, ZIP_STORED
 import os
 import shutil
 import tempfile
-from settings import build_path, creator_name, project_name
+from settings import build_path, project_name
 from Utility.helpers_path import ensure_path_created, remove_file, get_rel_path
 
 # Build paths and create temp directory
-folder_name = creator_name + "_" + project_name
+folder_name = project_name
 bundle_path = build_path + os.sep + folder_name + "-bundle.zip"
 tmp_dir = tempfile.TemporaryDirectory()
 tmp_dst_path = tmp_dir.name + os.sep + folder_name
@@ -35,7 +35,9 @@ remove_file(bundle_path)
 shutil.copytree(build_path, tmp_dst_path)
 
 # Zip up bundled folder
-zf = PyZipFile(bundle_path, mode='w', compression=ZIP_STORED, allowZip64=True, optimize=2)
+zf = PyZipFile(
+    bundle_path, mode="w", compression=ZIP_STORED, allowZip64=True, optimize=2
+)
 for root, dirs, files in os.walk(tmp_dir.name):
     for filename in files:
         rel_path = get_rel_path(root + os.sep + filename, tmp_dir.name)

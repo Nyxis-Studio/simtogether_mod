@@ -1,3 +1,18 @@
+# TODO:
+# - Support for keyword-only arguments
+# - Handle assert statements better
+# - (Partly done) Nice spacing between function/class declarations
+from __future__ import annotations
+import dis
+from array import array
+from opcode import opname, opmap, HAVE_ARGUMENT, cmp_op
+import inspect
+
+import struct
+import sys
+
+from typing import Union
+
 """
 Decompiler for Python3.7.
 Decompile a module or a function using the decompile() function
@@ -20,9 +35,6 @@ def foo(x, y, z=3, *args):
             return
 >>>
 """
-from __future__ import annotations
-
-from typing import Union
 
 __all__ = ['decompile']
 
@@ -48,19 +60,6 @@ def _trace(*args):
 
 
 current_trace = _trace
-
-# TODO:
-# - Support for keyword-only arguments
-# - Handle assert statements better
-# - (Partly done) Nice spacing between function/class declarations
-
-import dis
-from array import array
-from opcode import opname, opmap, HAVE_ARGUMENT, cmp_op
-import inspect
-
-import struct
-import sys
 
 # Masks for code object's co_flag attribute
 VARARGS = 4
